@@ -90,8 +90,34 @@ class character(object):
         if hitRoll >= self.hitChance:
             damageRoll = random.randint(1, self.maxDamage)
             damageDone = damageRoll - self.armor
+            postHitPoints = self.hitPoints - damageDone
             if damageDone <= 0:
                 print(f"{self.name} loses.")
-        postHitPoints = self.hitPoints - damageDone
- 
+    def fight(hero, monster):
+        keepGoing = True
+        while keepGoing:
+            character.hit(hero)
+            print(f"""
+            {hero} hits {monster} for {damageDone} hit points.
+            {monster}'s armor absorbs {monster.armor} points of damage.
+            """)
+            monster.hitPoints = postHitPoints
+            print(f"""
+            hero: {hero.hitPoints}
+            monster: {monster.hitPoints}
+            """)
+            character.hit(monster)
+            print(f"""
+            {monster} hits {hero} for {damageDone} hit points.
+            {hero}'s armor absorbs {hero.armor} points of damage.
+            """)
+            hero.hitPoints = postHitPoints
+            print(f"""
+            hero: {hero.hitPoints}
+            monster: {monster.hitPoints}
+              """)
+            goAgain = int(input("go another round? 1. yes 2. no"))
+            if goAgain == 2:
+                keepGoing = False
+
 __name__ == "__main__"
