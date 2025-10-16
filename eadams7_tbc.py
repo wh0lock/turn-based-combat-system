@@ -23,13 +23,7 @@ class character(object):
     @hitPoints.setter
     def hitPoints(self, value):
         if type(value) == int:
-            if value >= 0:
-                if value <= 100:
-                    self.__hitPoints = value
-                else:
-                    print("too large")
-            else:
-                print("too small")
+            self.__hitPoints = value
         else:
             print("must be an int")
     @property
@@ -85,39 +79,37 @@ class character(object):
               Hit Chance: {self.hitChance}
               Max Damage: {self.maxDamage}
               Armor: {self.armor}""")
-    def hit(self):
+    def hit(self, monster):
         hitRoll = random.randint(1, 100)
-        if hitRoll >= self.hitChance:
-            damageRoll = random.randint(1, self.maxDamage)
-            damageDone = damageRoll - self.armor
-            postHitPoints = self.hitPoints - damageDone
-            if damageDone <= 0:
-                print(f"{self.name} loses.")
-    def fight(hero, monster):
-        keepGoing = True
-        while keepGoing:
-            character.hit(hero)
-            print(f"""
-            {hero} hits {monster} for {damageDone} hit points.
-            {monster}'s armor absorbs {monster.armor} points of damage.
-            """)
-            monster.hitPoints = postHitPoints
-            print(f"""
-            hero: {hero.hitPoints}
-            monster: {monster.hitPoints}
-            """)
-            character.hit(monster)
-            print(f"""
-            {monster} hits {hero} for {damageDone} hit points.
-            {hero}'s armor absorbs {hero.armor} points of damage.
-            """)
-            hero.hitPoints = postHitPoints
-            print(f"""
-            hero: {hero.hitPoints}
-            monster: {monster.hitPoints}
-              """)
-            goAgain = int(input("go another round? 1. yes 2. no"))
-            if goAgain == 2:
-                keepGoing = False
+        if hitRoll < self.hitChance:
+            print(f"{self.name} hits {monster.name}...")
+            damage = random.randint(1, self.maxDamage)
+            print(f"for {damage} hit points...")
+            damage -= monster.armor
+            if damage < 0:
+                damage = 0
+            if monster.armor > 0:
+                print(f"but {monster.name}'s armor absorbs {monster.armor} points of the hit.")
+            monster.hitPoints -= damage
+        else:
+            print(f"{self.name} misses {monster.name}. Yikes.")
+
+def fight(hero, monster):
+    keepGoing = True
+    while keepGoing:
+        hero.hit(monster)
+        monster.hit(hero)
+        print(f"{hero.name} HP: {hero.hitPoints}")
+        print(f"{monster.name} HP: {monster.hitPoints}")
+        print("")
+        if hero.hitPoints <= 0:
+            print(f"{hero.name} loses")
+            keepGoing = False
+        elif monster.hitPoints <= 0:
+            print(f"{monster.name} loses")
+            keepGoing = False
+        goAgain = int(input("go again? 1. yes 2. no: "))
+        if goAgain == 2:
+            keepGoing = False
 
 __name__ == "__main__"
